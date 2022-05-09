@@ -1,9 +1,12 @@
 import { useState, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
 
 import UserContext from "./../contexts/UserContext";
+
+import API_LINK from "../data/links";
+import axios from "axios";
 
 export default function SignIn() {
 
@@ -15,13 +18,38 @@ export default function SignIn() {
     const [loading, setLoading] = useState(false);
     const { setUser } = useContext(UserContext);
 
+    const navigate = useNavigate();
+
+    function toLogin(event) {
+        event.preventDefault();
+
+        setLoading(true);
+
+        const promise = axios.post(`${API_LINK}/sign-in`, login);
+
+        promise.then((response) => {
+            const { data } = response;
+
+            setUser(data);
+            navigate("/wallet");
+        });
+
+        promise.catch((error) => {
+            const { status, data } = error.response;
+            console.log(error);
+            alert(`Não foi possível realizar o login.
+            Erro ${status}: ${data} `);
+
+            setLoading(false);
+        });
+    }
 
     const loginButton = loading ? <ThreeDots color="white" height={13} width={51} /> : "Entrar";
 
     return (
         <Content>
             <Logo>MyWallet</Logo>
-            <LoginForm>
+            <LoginForm onSubmit={toLogin}>
                 <input
                     type="email"
                     placeholder="E-mail"
@@ -47,7 +75,7 @@ export default function SignIn() {
                     {loginButton}
                 </button>
             </LoginForm>
-            
+
             <Link to="/register">
                 <RegisterLink>Primeira vez? Cadastre-se!</RegisterLink>
             </Link>

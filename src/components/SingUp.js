@@ -23,11 +23,11 @@ export default function SignUp() {
     function toRegister(event) {
         event.preventDefault();
 
-        if (register.password !== register.confirmation_password){
+        if (register.password !== register.confirmation_password) {
             alert("As senhas devem ser iguais");
             return;
         }
-        
+
         setLoading(true);
 
         const promise = axios.post(`${API_LINK}/sign-up`, register);
@@ -37,7 +37,7 @@ export default function SignUp() {
         });
 
         promise.catch((error) => {
-            const {status, data} = error.response;
+            const { status, data } = error.response;
 
             alert(`Não foi possível realizar o cadastro.
             Erro ${status}: ${data} `);
