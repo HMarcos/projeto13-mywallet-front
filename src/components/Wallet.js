@@ -2,16 +2,20 @@ import { useContext, useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { ThreeDots } from "react-loader-spinner";
+import { useNavigate } from "react-router-dom";
 
 import UserContext from "./../contexts/UserContext";
 
 import API_LINK from "../data/links";
+
 
 function Wallet() {
 
     const { user } = useContext(UserContext);
 
     const [wallet, setWallet] = useState(null);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const config = {
@@ -93,6 +97,26 @@ function Wallet() {
         }
     }
 
+    function logout(){
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user.token}`
+            }
+        };
+
+        const promise = axios.delete(`${API_LINK}/logout`, config);
+
+        promise.then((response) => {
+            navigate("/");
+        });
+
+        promise.catch((error) => {
+            const { status, data } = error.response;
+            alert(`Não foi deslogar o usuário.
+            Erro ${status}: ${data} `);
+        })
+    }
+
     const operationsSectionContent = setOperationsSection();
 
     console.log(wallet);
@@ -102,7 +126,7 @@ function Wallet() {
             <Header>
                 <div>
                     <h1>{`Olá, ${user.name}`}</h1>
-                    <ion-icon name="log-out-outline"></ion-icon>
+                    <ion-icon onClick={logout} name="log-out-outline"></ion-icon>
                 </div>
             </Header>
 
