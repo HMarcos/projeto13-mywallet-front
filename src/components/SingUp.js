@@ -1,7 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
+import axios from "axios";
+
+import API_LINK from "./../data/links.js";
+
 
 export default function SignUp() {
 
@@ -9,17 +13,45 @@ export default function SignUp() {
         name: "",
         email: "",
         password: "",
-        password_confirmation: ""
+        confirmation_password: ""
     });
 
     const [loading, setLoading] = useState(false);
+
+    const navigate = useNavigate();
+
+    function toRegister(event) {
+        event.preventDefault();
+
+        if (register.password !== register.confirmation_password){
+            alert("As senhas devem ser iguais");
+            return;
+        }
+        
+        setLoading(true);
+
+        const promise = axios.post(`${API_LINK}/sign-up`, register);
+
+        promise.then((response) => {
+            navigate("/");
+        });
+
+        promise.catch((error) => {
+            const {status, data} = error.response;
+
+            alert(`Não foi possível realizar o cadastro.
+            Erro ${status}: ${data} `);
+
+            setLoading(false);
+        })
+    }
 
     const registerButton = loading ? <ThreeDots color="white" height={13} width={51} /> : "Cadastrar";
 
     return (
         <Content>
             <Logo>MyWallet</Logo>
-            <LoginForm>
+            <LoginForm onSubmit={toRegister}>
                 <input
                     type="text"
                     placeholder="Nome"
@@ -56,9 +88,9 @@ export default function SignUp() {
                     placeholder="Confirme a senha"
                     required
                     disabled={loading}
-                    value={register.password}
+                    value={register.confirmation_password}
                     minLength={8}
-                    onChange={(event) => setRegister({ ...register, password_confirmation: event.target.value })}
+                    onChange={(event) => setRegister({ ...register, confirmation_password: event.target.value })}
                 >
                 </input>
 
