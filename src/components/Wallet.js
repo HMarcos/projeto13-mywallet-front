@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { ThreeDots } from "react-loader-spinner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import UserContext from "./../contexts/UserContext";
 
@@ -54,7 +54,7 @@ function Wallet() {
             alignOperations = "space-between";
 
             let balanceColor = null;
-            if(wallet.balance >= 0) {
+            if (wallet.balance >= 0) {
                 balanceColor = "#03AC00";
             }
             else {
@@ -82,7 +82,7 @@ function Wallet() {
                                     </div>
 
                                     <div>
-                                        <span className="value"> {operation.value.toFixed(2).replace(".", ",")}</span>
+                                        <span className="value"> {parseFloat(operation.value).toFixed(2).replace(".", ",")}</span>
                                     </div>
                                 </Operation>
                             )
@@ -90,14 +90,14 @@ function Wallet() {
                     </Registers>
                     <Balance color={balanceColor}>
                         <span className="text">SALDO</span>
-                        <span className="value">{wallet.balance.toFixed(2).replace(".", ",")}</span>  
+                        <span className="value">{parseFloat(wallet.balance).toFixed(2).replace(".", ",")}</span>
                     </Balance>
                 </>
             )
         }
     }
 
-    function logout(){
+    function logout() {
         const config = {
             headers: {
                 Authorization: `Bearer ${user.token}`
@@ -136,15 +136,19 @@ function Wallet() {
 
             <Footer>
                 <div>
-                    <button>
-                        <ion-icon name="add-circle-outline"></ion-icon>
-                        <span>Nova entrada</span>
-                    </button>
+                    <Link to="/incoming-payment">
+                        <button>
+                            <ion-icon name="add-circle-outline"></ion-icon>
+                            <span>Nova entrada</span>
+                        </button>
+                    </Link>
 
-                    <button>
-                        <ion-icon name="remove-circle-outline"></ion-icon>
-                        <span>Nova saída</span>
-                    </button>
+                    <Link to="/outgoing-payment">
+                        <button>
+                            <ion-icon name="remove-circle-outline"></ion-icon>
+                            <span>Nova saída</span>
+                        </button>
+                    </Link>
                 </div>
             </Footer>
         </>

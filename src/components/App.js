@@ -6,6 +6,8 @@ import GlobalStyle from "./GlobalStyle";
 import SignIn from "./SignIn";
 import SignUp from "./SingUp";
 import Wallet from "./Wallet";
+import IncomingPayment from "./IncomingPayment";
+import OutgoingPayment from "./OutgoingPayment";
 
 import UserContext from "./../contexts/UserContext";
 
@@ -26,6 +28,8 @@ export default function App() {
                         <Route path="/" element={<SignIn />}></Route>
                         <Route path="/register" element={<SignUp />}></Route>
                         <Route path="/wallet" element={<Wallet />}></Route>
+                        <Route path="/incoming-payment" element={<IncomingPayment />}></Route>
+                        <Route path="/outgoing-payment" element={<OutgoingPayment />}></Route>
                     </Routes>
                 </BrowserRouter>
             </UserContext.Provider>
