@@ -36,7 +36,7 @@ function Wallet() {
     }, []);
 
 
-    const alignOperations = "center";
+    let alignOperations = "center";
 
     function setOperationsSection() {
         if (wallet === null) {
@@ -49,32 +49,46 @@ function Wallet() {
 
             alignOperations = "space-between";
 
-            return (
-                <Registers>
-                    {wallet.operations.map((operation) => {
-                        let colorOperation = null;
-                        if (operation.type === "incoming"){
-                            colorOperation = "#03AC00";
-                        }
-                        else{
-                            colorOperation = "#C70000";
-                        }
+            let balanceColor = null;
+            if(wallet.balance >= 0) {
+                balanceColor = "#03AC00";
+            }
+            else {
+                balanceColor = "#C70000";
+            }
 
-                       return (
-                            
-                            <Operation color={colorOperation}>
-                                <div>
-                                    <span className="date">{operation.date}</span>
-                                    <span className="description"> {operation.description}</span>
-                                </div>
-                                    
-                                <div>
-                                    <span className="value"> {operation.value}</span>
-                                </div>
-                            </Operation>
-                        )
-                    } )}
-                </Registers>
+            return (
+                <>
+                    <Registers>
+                        {wallet.operations.map((operation, index) => {
+                            let colorOperation = null;
+                            if (operation.type === "incoming") {
+                                colorOperation = "#03AC00";
+                            }
+                            else {
+                                colorOperation = "#C70000";
+                            }
+
+                            return (
+
+                                <Operation key={index} color={colorOperation}>
+                                    <div>
+                                        <span className="date">{operation.date}</span>
+                                        <span className="description"> {operation.description}</span>
+                                    </div>
+
+                                    <div>
+                                        <span className="value"> {operation.value.toFixed(2).replace(".", ",")}</span>
+                                    </div>
+                                </Operation>
+                            )
+                        })}
+                    </Registers>
+                    <Balance color={balanceColor}>
+                        <span className="text">SALDO</span>
+                        <span className="value">{wallet.balance.toFixed(2).replace(".", ",")}</span>  
+                    </Balance>
+                </>
             )
         }
     }
@@ -172,12 +186,21 @@ const Operations = styled.section`
 const Registers = styled.div`
     display: flex;
     flex-direction: column;
+
+    width: 100%;
+
+    margin-top: 15px;
+
+    height: 90%;
 `;
 
 const Operation = styled.div`
     display: flex;
     justify-content: space-between;
     
+    margin-top: 5px;
+    
+
     div{
         .date{
             font-weight: 400;
@@ -185,6 +208,8 @@ const Operation = styled.div`
             line-height: 19px;
 
             color: #C6C6C6;
+
+            margin-left: 12px;
         }
 
         .description {
@@ -192,7 +217,9 @@ const Operation = styled.div`
             font-size: 16px;
             line-height: 19px;
 
-            color: #000000
+            color: #000000;
+
+            margin-left: 5px;
         }
 
         .value {
@@ -202,7 +229,38 @@ const Operation = styled.div`
             text-align: right;
 
             color:  ${(props) => props.color};
+
+            margin-right: 11px;
         }
+    }
+`;
+
+const Balance = styled.div`
+    display: flex;
+    justify-content: space-between;
+
+    width: 100%;
+    margin-bottom: 10px;
+
+    .text {
+        font-weight: 700;
+        font-size: 17px;
+        line-height: 20px;
+
+        color: #000000;
+
+        margin-left: 12px;
+    }
+
+    .value {
+
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 19px;
+        text-align: right;
+        
+        color:  ${(props) => props.color};
+        margin-right: 11px;
     }
 `;
 
