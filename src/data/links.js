@@ -1,3 +1,3 @@
-const API_LINK = "http://localhost:5000";
+const API_LINK = "https://back-end-mywallet.herokuapp.com";
 
 export default API_LINK;
