@@ -2,11 +2,12 @@ import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
+import axios from "axios";
 
 import UserContext from "./../contexts/UserContext";
 
 import API_LINK from "../data/links";
-import axios from "axios";
+
 
 export default function SignIn() {
 

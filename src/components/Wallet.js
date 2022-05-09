@@ -1,28 +1,87 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import styled from "styled-components";
-
+import axios from "axios";
 import { ThreeDots } from "react-loader-spinner";
 
 import UserContext from "./../contexts/UserContext";
+
+import API_LINK from "../data/links";
 
 function Wallet() {
 
     const { user } = useContext(UserContext);
 
-    const [operations, setOperations] = useState(null);
+    const [wallet, setWallet] = useState(null);
+
+    useEffect(() => {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user.token}`
+            }
+        };
+
+        const promise = axios.get(`${API_LINK}/operations`, config);
+
+        promise.then((response) => {
+            const { data } = response;
+
+            setWallet(data);
+        });
+
+        promise.catch((error) => {
+            const { status, data } = error.response;
+            alert(`Não foi possível recuperar as operações do usuário.
+            Erro ${status}: ${data} `);
+        })
+    }, []);
+
 
     const alignOperations = "center";
 
     function setOperationsSection() {
-        if (operations === null) {
+        if (wallet === null) {
             return <ThreeDots color="gray" height={13} width={51} />;
         }
-        else if (operations.length === 0) {
+        else if (wallet.operations.length === 0) {
             return <span>Não há registros de <br />entrada ou saída</span>
+        }
+        else {
+
+            alignOperations = "space-between";
+
+            return (
+                <Registers>
+                    {wallet.operations.map((operation) => {
+                        let colorOperation = null;
+                        if (operation.type === "incoming"){
+                            colorOperation = "#03AC00";
+                        }
+                        else{
+                            colorOperation = "#C70000";
+                        }
+
+                       return (
+                            
+                            <Operation color={colorOperation}>
+                                <div>
+                                    <span className="date">{operation.date}</span>
+                                    <span className="description"> {operation.description}</span>
+                                </div>
+                                    
+                                <div>
+                                    <span className="value"> {operation.value}</span>
+                                </div>
+                            </Operation>
+                        )
+                    } )}
+                </Registers>
+            )
         }
     }
 
     const operationsSectionContent = setOperationsSection();
+
+    console.log(wallet);
 
     return (
         <>
@@ -43,7 +102,7 @@ function Wallet() {
                         <ion-icon name="add-circle-outline"></ion-icon>
                         <span>Nova entrada</span>
                     </button>
-                    
+
                     <button>
                         <ion-icon name="remove-circle-outline"></ion-icon>
                         <span>Nova saída</span>
@@ -107,6 +166,43 @@ const Operations = styled.section`
         text-align: center;
 
         color: #868686;
+    }
+`;
+
+const Registers = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
+
+const Operation = styled.div`
+    display: flex;
+    justify-content: space-between;
+    
+    div{
+        .date{
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 19px;
+
+            color: #C6C6C6;
+        }
+
+        .description {
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 19px;
+
+            color: #000000
+        }
+
+        .value {
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 19px;
+            text-align: right;
+
+            color:  ${(props) => props.color};
+        }
     }
 `;
 
